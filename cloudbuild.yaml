@@ -1,8 +1,9 @@
 steps:
 - name: gcr.io/cloud-builders/gcloud
   env:
-    - 'load_balancer=$_LOAD_BALANCER'
+    - 'load_balancer_name=$_LOAD_BALANCER'
     - 'project=$_PROJECT'
+    - 'region=$_REGION'
   entrypoint: "bash"
   args: ['./renew-certificate.sh']
 options:

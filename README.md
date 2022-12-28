@@ -26,6 +26,7 @@ Projeto criado para renovar certificados associados ao balanceador utilizando o 
     - Definir as variáveis de ambiente que estão no script do ```cloudbuild.yaml```, as variáveis são:
         - _LOAD_BALANCER: Nome do balanceador.
         - _PROJECT: Nome do projeto que contém os certificados.
+        - _REGION:Região que está o balanceador.
     
     - Associar uma conta de serviço a trigger que contenha as permissões acima.
 
