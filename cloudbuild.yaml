@@ -4,6 +4,6 @@ steps:
     - 'load_balancer=$_LOAD_BALANCER'
     - 'project=$_PROJECT'
   entrypoint: "bash"
-  args: ['./s3-fe.sh']
+  args: ['./renew-certificate.sh']
 options:
   logging: CLOUD_LOGGING_ONLY
