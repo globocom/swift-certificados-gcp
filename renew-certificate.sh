@@ -40,7 +40,7 @@ for lbc in ${load_balancer_certificates[@]}; do
         gcloud compute ssl-certificates create ${file_name}-${date_today} --certificate=${file_name}.crt --private-key=${file_name}.key --region=${region}
         
         #ID of certificate created
-        certificate_id=$(gcloud compute ssl-certificates describe ${lbc} --region=${region} --format=json | jq -r .id)
+        certificate_id=$(gcloud compute ssl-certificates describe ${file_name}-${date_today} --region=${region} --format=json | jq -r .id)
         echo "ID do certificado criado: ${certificate_id}"
 
         if [ ! -z "${certificate_id}" ]; then
