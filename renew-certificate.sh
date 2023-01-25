@@ -4,12 +4,12 @@
 apt update && apt install jq -y 
 
 #Name of certificates
-load_balancer_certificates=($(gcloud compute target-https-proxies describe ${load_balancer_name} --region ${region} --format=json | jq -r '.sslCertificates[]'))
+load_balancer_certificates=($(gcloud compute target-https-proxies describe ${load_balancer_name} --format=json | jq -r '.sslCertificates[]'))
 
 for lbc in ${load_balancer_certificates[@]}; do
 
     #Select certificate expiration date
-    ssl_date=$(gcloud compute ssl-certificates describe ${lbc} --region=${region} --format=json | jq .expireTime)
+    ssl_date=$(gcloud compute ssl-certificates describe ${lbc} --format=json | jq .expireTime)
     ssl_date=${ssl_date:1:10}
     ssl_date=$(echo $ssl_date | tr -d "-")
 
@@ -26,21 +26,21 @@ for lbc in ${load_balancer_certificates[@]}; do
         echo "Renovando certificado ${lbc}"
 
         #Get name of certificate
-        certificate=$(gcloud compute ssl-certificates describe ${lbc} --region=${region} --format=json | jq -r .name)
+        certificate=$(gcloud compute ssl-certificates describe ${lbc} --format=json | jq -r .name)
 
         #Get FQDN
-        host_certificate=$(gcloud compute ssl-certificates describe ${lbc} --region=${region} --format=json | jq .subjectAlternativeNames | xargs | awk '{print $2}')
-        file_name=$(gcloud compute ssl-certificates describe ${lbc} --region=${region} --format=json | jq .subjectAlternativeNames | xargs | awk '{print $2}' | sed 's/\./-/g')
+        host_certificate=$(gcloud compute ssl-certificates describe ${lbc} --format=json | jq .subjectAlternativeNames | xargs | awk '{print $2}')
+        file_name=$(gcloud compute ssl-certificates describe ${lbc} --format=json | jq .subjectAlternativeNames | xargs | awk '{print $2}' | sed 's/\./-/g')
 
         echo "Cria certificado com o nome ${file_name}-${date_today}"
         #Obtém certificado do secret manager e salva em um arquivo
         gcloud secrets versions access latest --secret=${file_name}-crt --project ${project} > ${file_name}.crt
         gcloud secrets versions access latest --secret=${file_name}-key --project ${project} > ${file_name}.key
 
-        gcloud compute ssl-certificates create ${file_name}-${date_today} --certificate=${file_name}.crt --private-key=${file_name}.key --region=${region}
+        gcloud compute ssl-certificates create ${file_name}-${date_today} --certificate=${file_name}.crt --private-key=${file_name}.key
         
         #ID of certificate created
-        certificate_id=$(gcloud compute ssl-certificates describe ${file_name}-${date_today} --region=${region} --format=json | jq -r .id)
+        certificate_id=$(gcloud compute ssl-certificates describe ${file_name}-${date_today} --format=json | jq -r .id)
         echo "ID do certificado criado: ${certificate_id}"
 
         if [ ! -z "${certificate_id}" ]; then
@@ -50,14 +50,14 @@ for lbc in ${load_balancer_certificates[@]}; do
             target_proxy=$(gcloud compute target-https-proxies list --filter="SSL_CERTIFICATES:'${lbc}'" --format=json | jq -r '.[].name')
             #Get all certificates currently on the load-balancer less the will be delete
             list_certificate=$(gcloud compute target-https-proxies list --format=text --filter="SSL_CERTIFICATES:'${lbc}'" |grep sslCertificates |grep -v ${lbc} | awk -F "/" '{print $NF}')
-            gcloud compute target-https-proxies update ${target_proxy} --ssl-certificates=${file_name}-${date_today},${list_certificate} --region=${region}
+            gcloud compute target-https-proxies update ${target_proxy} --ssl-certificates=${file_name}-${date_today},${list_certificate}
             
             echo "Deleta certificado antigo"
-            gcloud compute ssl-certificates delete ${certificate} --region=${region} --quiet
+            gcloud compute ssl-certificates delete ${certificate} --quiet
 
             load_balancer=$(gcloud compute target-https-proxies list --format=text --filter="SSL_CERTIFICATES:'${lbc}'" | grep urlMap | awk -F "/" '{print $NF}')
             echo "Certificados associados ao balanceador ${load_balancer}"
-            certificate_lb=$(gcloud compute target-https-proxies describe ${target_proxy} --region=${region} --format=json | jq .sslCertificates)
+            certificate_lb=$(gcloud compute target-https-proxies describe ${target_proxy} --format=json | jq .sslCertificates)
             echo $certificate_lb
 
         else

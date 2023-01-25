@@ -1,6 +1,6 @@
-# Swift-Certificados-GCP
+# Swift-Certificados-GCP - branch global load balancer
 
-Projeto criado para renovar certificados associados ao balanceador utilizando o Cloud Build.
+Projeto criado para renovar certificados associados ao balanceador externo utilizando o Cloud Build.
 
 ## Requisitos
 - Possuir uma conta no GCP.
@@ -26,7 +26,6 @@ Projeto criado para renovar certificados associados ao balanceador utilizando o 
     - Definir as variáveis de ambiente que estão no script do ```cloudbuild.yaml```, as variáveis são:
         - _LOAD_BALANCER: Nome do proxy HTTPS usado ​​pelo balanceador.
         - _PROJECT: Nome do projeto que contém os certificados.
-        - _REGION:Região que está o balanceador.
     
     - Associar uma conta de serviço a trigger que contenha as permissões acima.
 

@@ -3,7 +3,6 @@ steps:
   env:
     - 'load_balancer_name=$_LOAD_BALANCER'
     - 'project=$_PROJECT'
-    - 'region=$_REGION'
   entrypoint: "bash"
   args: ['./renew-certificate.sh']
 options:
