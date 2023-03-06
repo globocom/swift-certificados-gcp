@@ -47,12 +47,14 @@ Pode-se criar uma monitoração para a trigger no Cloud Build, passo a passo del
         resource.type="build" 
         severity=ERROR 
         OR não foi criado 
+        OR Sem acesso ao certificado
         ```
     - Se no mesmo projeto tiver mais de uma monitoração, preencher o filtro com o ID da build:
         ```
         resource.type="build" 
         severity=ERROR 
         OR não foi criado 
+        OR Sem acesso ao certificado
         AND resource.labels.build_trigger_id=<id-build>
         ```
     - Por fim, conferir e criar a métrica.
