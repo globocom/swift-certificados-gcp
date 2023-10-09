@@ -13,8 +13,8 @@ for lbc in ${load_balancer_certificates[@]}; do
     ssl_date=${ssl_date:1:10}
     ssl_date=$(echo $ssl_date | tr -d "-")
 
-    #Current date more five days
-    date=$(date --date="+15 days" +"%F")
+    #Current date more eighteen days
+    date=$(date --date="+18 days" +"%F")
     date=$(echo $date | tr -d "-")
 
     #Curret date
