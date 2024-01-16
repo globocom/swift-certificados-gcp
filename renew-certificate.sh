@@ -33,8 +33,9 @@ for lbc in ${load_balancer_certificates[@]}; do
         file_name=$(gcloud compute ssl-certificates describe ${lbc} --region=${region} --format=json | jq .subjectAlternativeNames | xargs | awk '{print $2}' | sed 's/\./-/g')
 
         #Try to get certificate from Secret Manager
-        test_cert=$(gcloud secrets versions access latest --secret=${file_name}-crt --project ${project})
-        if [ -z "${test_cert}" ]; then
+        test_cert_crt=$(gcloud secrets versions access latest --secret=${file_name}-crt --project ${project})
+        test_cert_key=$(gcloud secrets versions access latest --secret=${file_name}-key --project ${project})
+        if [[ -z "${test_cert_crt}" || -z "${test_cert_key}" ]]; then
 
             echo "Sem acesso ao certificado ${file_name} no Secret Manager"
             exit 1
